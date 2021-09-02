@@ -1,6 +1,6 @@
 const { admin } = require("../database/firebase");
 
-const vertifyToken = (req, res, next) => {
+const vertifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(403).send({ message: "Unauthorized" });
@@ -8,14 +8,18 @@ const vertifyToken = (req, res, next) => {
 
   try {
     const token = req.headers.authorization.split(" ")[1];
-    const decode = admin.auth().verifyIdToken(token);
+    const decode = await admin.auth().verifyIdToken(token);
+
     if (decode) {
+      req.uid = decode.uid;
       return next();
-    } else {
+    } 
+    else {
       return res.json({ message: "Unauthorized" });
     }
-  } catch (error) {
-    return res.json({ message: "Internal Error" });
+  } 
+  catch (error) {
+    return res.json({ message: "Invalid Token" });
   }
 };
 

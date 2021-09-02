@@ -1,31 +1,47 @@
 const firebase = require('firebase');
-const admin = require("firebase-admin");
+const firebaseAdmin = require("firebase-admin");
 
 const serviceAccount = require("./serviceAccountKey.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://khohuai-v2-default-rtdb.firebaseio.com"
+const admin = firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount),
+  databaseURL: "https://khohuai-v2-default-rtdb.firebaseio.com",
+  storageBucket: "gs://khohuai-v2.appspot.com"
 });
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyDFVW8oB9jThgn0V_dBOlwlSw7xXOIGEMk",
   authDomain: "khohuai-v2.firebaseapp.com",
   databaseURL: "https://khohuai-v2-default-rtdb.firebaseio.com",
-  projectId: "khohuai-v2",
-  storageBucket: "khohuai-v2.appspot.com",
-  messagingSenderId: "644654390402",
-  appId: "1:644654390402:web:7d6bb217c4a6daff64e89b"
+  projectId: "khohuai-v2"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+
 //firestore
-const firestore = firebase.firestore();
+const firestore = firebaseApp.firestore();
+
+//email&password login
+const auth = firebaseApp.auth();
+
+//google login 
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+//facebook login
+const facebookProvider = new firebase.auth.FacebookAuthProvider();
+facebookProvider.addScope('user_birthday');
+
+// //firebase storage
+const storage = admin.storage();
+const bucket = storage.bucket();
 
 module.exports = {
-  admin,
-  firebase,
-  firestore
-};
+    firebaseApp,
+    firestore,
+    auth,
+    googleProvider,
+    facebookProvider,
+    admin,
+    storage,
+    bucket
+}
